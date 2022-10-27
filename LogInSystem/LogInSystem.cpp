@@ -9,6 +9,7 @@ int id;
 string name, pass;
 string nameNew, passNew;
 string databaseStr;
+int totalUsers = 0;
 
 bool logInTest = 0;
 string passTry, nameTry;
@@ -79,22 +80,36 @@ void changeData() {
 	}
 }
 
+void countUsers() {
+	database.open("database.txt");
+	string line;
+	while(!database.eof()) {
+		getline(database, line);
+		totalUsers++;
+	}
+	database.close();
+	cout << totalUsers; //DevMode
+}
+
 int main() {
-	cout << "Id: ";
-	cin >> id;
-	findData();
-	database >> name;
-	database >> pass;
-	database.close();	
-	cout << name << endl; //DevMode
-	cout << pass << endl; //DevMode
+	database.close();
 	cout << "1 > Log In\n2 > Sign In\n";
 	cin >> hallway;
 	if(hallway == 1) {
+		database.open("database.txt");
+		cout << "Id: ";
+		cin >> id;
+		findData();
+		database >> name;
+		database >> pass;
+		database.close();
+		cout << name << endl; //DevMode
+		cout << pass << endl; //DevMode
 		logIn();
 		changeData();
 	}
 	else if(hallway == 2) {
+		countUsers();
 		database.open("database.txt");
 		
 		
