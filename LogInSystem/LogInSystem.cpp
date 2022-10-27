@@ -2,12 +2,14 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <windows.h>
 using namespace std;
 
 int hallway, hallway2;
 int id;
 string name, pass;
 string nameNew, passNew;
+string newUserName, newUserPass;
 string databaseStr;
 int totalUsers = 0;
 
@@ -16,7 +18,21 @@ string passTry, nameTry;
 
 fstream database("database.txt");
 
-stringstream buffer;
+void databaseToStr() {
+	stringstream buffer;
+	database.open("database.txt");
+	buffer << database.rdbuf();
+	databaseStr = buffer.str();
+	cout << databaseStr << endl << endl; //DevMode
+	database.close();
+}
+
+void strToDatabase() {
+	database.open("database.txt",ios::out|ios::trunc);
+	database << databaseStr;
+	cout << databaseStr << endl << endl; //DevMode
+	database.close();
+}
 
 void findData() {
 	for(int i = 2*id-1; i > 0; i--) {
@@ -26,7 +42,7 @@ void findData() {
 
 void logIn() {
 	while(logInTest == 0) {
-		cout << "Name: ";
+		cout << "Username: ";
 		cin >> nameTry;
 		cout << "Password: ";
 		cin >> passTry;
@@ -36,47 +52,33 @@ void logIn() {
 				cout << "You're in!" << endl;
 			}
 			else {
-				cout << "Wrong Name or Password!" << endl;
+				cout << "Wrong Username or Password!" << endl;
 			}
 		}
 		else {
-			cout << "Wrong Name! or Password!" << endl; //DevMode
+			cout << "Wrong Username! or Password!" << endl; //DevMode
 		}
 	}
 }
 
 void changeData() {
-	cout << "1 > Change Name\n2 > Change Pasword\n";
+	cout << "1 > Change Username\n2 > Change Pasword\n";
 	cin >> hallway2;	
 	if(hallway2 == 1) {
 		logIn();
-		database.open("database.txt");
-		cout << "New Name: ";
+		cout << "New Username: ";
 		cin >> nameNew;
-		buffer << database.rdbuf();
-		databaseStr = buffer.str();
-		cout << databaseStr << endl << endl; //DevMode
-		database.close();
+		databaseToStr();
 		databaseStr.replace(databaseStr.find(name),name.length(),nameNew);
-		database.open("database.txt",ios::out|ios::trunc);
-		database << databaseStr;
-		cout << databaseStr; //DevMode
-		database.close();	
+		strToDatabase();
 	}
 	else if(hallway2 == 2) {
 		logIn();
-		database.open("database.txt");
 		cout << "New Password: ";
 		cin >> passNew;
-		buffer << database.rdbuf();
-		databaseStr = buffer.str();
-		cout << databaseStr << endl << endl; //DevMode
-		database.close();
+		databaseToStr();
 		databaseStr.replace(databaseStr.find(pass),pass.length(),passNew);
-		database.open("database.txt",ios::out|ios::trunc);
-		database << databaseStr;
-		cout << databaseStr; //DevMode
-		database.close();
+		strToDatabase();
 	}
 }
 
@@ -87,13 +89,14 @@ void countUsers() {
 		getline(database, line);
 		totalUsers++;
 	}
+	line = "";
 	database.close();
-	cout << totalUsers; //DevMode
+	cout << totalUsers << endl; //DevMode
 }
 
 int main() {
 	database.close();
-	cout << "1 > Log In\n2 > Sign In\n";
+	cout << "1 > Log In\n2 > Sign Up\n";
 	cin >> hallway;
 	if(hallway == 1) {
 		database.open("database.txt");
@@ -109,12 +112,22 @@ int main() {
 		changeData();
 	}
 	else if(hallway == 2) {
+		cout << "Your Username: ";
+		cin >> newUserName;
+		cout << "Your Password: ";
+		cin >> newUserPass;
 		countUsers();
-		database.open("database.txt");
-		
-		
-		
+		databaseToStr();
+		database.open("database.txt", ios::out | ios::app);
+		database << endl << totalUsers + 1 << " " << newUserName << " " << newUserPass;
 		database.close();
+		databaseToStr();
+		HANDLE  hConsole;
+		hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hConsole, 10);
+		cout << "Please note your id below, you need that for log in" << endl;
+		cout << "Your Id is = " << totalUsers + 1 << endl;
+		SetConsoleTextAttribute(hConsole, 7);
 	}	
 	//The End
 	cout << endl;system("PAUSE");return 0;
