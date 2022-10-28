@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <windows.h>
+#include <limits>
 using namespace std;
 
 int hallway, hallway2, hallway3;
@@ -226,8 +227,15 @@ int main() {
 		cout << endl << endl;
 		if(hallway == 1) {
 			database.open("database.txt");
+			retryId:
 			cout << "Id: ";
 			cin >> id;
+			if(cin.fail()) {
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Please enter a positive number!" << endl;
+				goto retryId;
+			}
 			findData();
 			database >> name;
 			database >> pass;
