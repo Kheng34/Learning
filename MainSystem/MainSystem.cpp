@@ -14,6 +14,7 @@ string newUserName, newUserPass;
 string databaseStr;
 int totalUsers = 0;
 bool hallway3Again = 1;
+bool hallway2Again = 1;
 
 bool exitProgram = 0;
 
@@ -70,7 +71,7 @@ void logIn() {
 		if(nameTry == name) {
 			if(passTry == pass) {
 				logInTest = 1;
-				cout << "You're in!" << endl << endl << endl;
+				cout << "Success!" << endl << endl << endl;
 			}
 			else {
 				cout << "Wrong Username or Password!" << endl;
@@ -84,27 +85,6 @@ void logIn() {
 				cout << "Wrong Username or Password!" << endl;
 			}
 		}
-	}
-}
-
-void changeData() {
-	cout << "1 > Change Username\n2 > Change Pasword\n";
-	cin >> hallway2;	
-	if(hallway2 == 1) {
-		logIn();
-		cout << "New Username: ";
-		cin >> nameNew;
-		databaseToStr();
-		databaseStr.replace(databaseStr.find(name),name.length(),nameNew);
-		strToDatabase();
-	}
-	else if(hallway2 == 2) {
-		logIn();
-		cout << "New Password: ";
-		cin >> passNew;
-		databaseToStr();
-		databaseStr.replace(databaseStr.find(pass),pass.length(),passNew);
-		strToDatabase();
 	}
 }
 
@@ -247,7 +227,7 @@ int main() {
 			logIn();
 			hallway3Again = 1;
 			while(hallway3Again == 1) {
-				cout << "Main Menu\n1 > Calculator\n2 > !Nuclear System!\n3 > Account Settings\n4 > Log Out\n5 > Exit\n";
+				cout << "\nMain Menu\n1 > Calculator\n2 > !Nuclear System!\n3 > Account Settings\n4 > Log Out\n5 > Exit\n";
 				cin >> hallway3;
 				cout << endl << endl;
 				if(hallway3 == 1) {
@@ -263,7 +243,33 @@ int main() {
 					}
 				}
 				else if(hallway3 == 3) {
-					changeData();
+					hallway2Again = 1;
+					while(hallway2Again == 1) {
+						cout << "\nAccount Settings\n1 > Change Username\n2 > Change Pasword\n3 > Back\n4 > Exit\n";
+						cin >> hallway2;	
+						if(hallway2 == 1) {
+							logIn();
+							cout << "New Username: ";
+							cin >> nameNew;
+							databaseToStr();
+							databaseStr.replace(databaseStr.find(name),name.length(),nameNew);
+							strToDatabase();
+						}
+						else if(hallway2 == 2) {
+							logIn();
+							cout << "New Password: ";
+							cin >> passNew;
+							databaseToStr();
+							databaseStr.replace(databaseStr.find(pass),pass.length(),passNew);
+							strToDatabase();
+						}
+						else if(hallway2 == 3) {
+							hallway2Again = 0;
+						}
+						else {
+							cout << endl;system("PAUSE");return 0;
+						}
+					}
 				}
 				else if(hallway3 == 4) {
 					hallway3Again = 0;
